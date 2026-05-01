@@ -3,6 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 export default function Token({
   token,
   label,
+  locked = false,
+  colorful = false,
+  colorIndex = -1,
   isSelected,
   isDragging,
   isDropTarget,
@@ -25,6 +28,11 @@ export default function Token({
   }, [editing]);
 
   const typeClass = `token-template-field__token--${token.type}`;
+  const colorClass = token.type === 'placeholder'
+    ? (colorful && colorIndex >= 0
+      ? `token-template-field__token--color-${colorIndex}`
+      : 'token-template-field__token--mono')
+    : '';
   const selectedClass = isSelected ? 'token-template-field__token--selected' : '';
   const draggingClass = isDragging ? 'token-template-field__token--dragging' : '';
   const dropTargetClass = isDropTarget ? 'token-template-field__token--droptarget' : '';
@@ -32,6 +40,7 @@ export default function Token({
   const className = [
     'token-template-field__token',
     typeClass,
+    colorClass,
     selectedClass,
     draggingClass,
     dropTargetClass,
@@ -45,6 +54,7 @@ export default function Token({
   };
 
   const handleDoubleClick = (e) => {
+    if (locked) return;
     if (token.type === 'text') {
       e.stopPropagation();
       setEditing(true);
@@ -95,26 +105,28 @@ export default function Token({
   return (
     <span
       className={className}
-      draggable="true"
-      onClick={onSelect}
+      draggable={!locked}
+      onClick={locked ? undefined : onSelect}
       onDoubleClick={handleDoubleClick}
-      onDragStart={(e) => {
+      onDragStart={locked ? undefined : (e) => {
         e.dataTransfer.effectAllowed = 'move';
         onDragStart(e);
       }}
-      onDragOver={onDragOver}
-      onDrop={onDrop}
-      onDragEnd={onDragEnd}
+      onDragOver={locked ? undefined : onDragOver}
+      onDrop={locked ? undefined : onDrop}
+      onDragEnd={locked ? undefined : onDragEnd}
     >
       <span className="token-template-field__token-label">{label}</span>
-      <button
-        type="button"
-        className="token-template-field__token-remove"
-        onClick={handleRemoveClick}
-        aria-label="Remove"
-      >
-        ×
-      </button>
+      {!locked && (
+        <button
+          type="button"
+          className="token-template-field__token-remove"
+          onClick={handleRemoveClick}
+          aria-label="Remove"
+        >
+          ×
+        </button>
+      )}
     </span>
   );
 }

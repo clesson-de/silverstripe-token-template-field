@@ -11,16 +11,33 @@ $.entwine('ss', function ($) {
       const el = this[0];
       const availableTokens = JSON.parse(el.dataset.availableTokens || '{}');
       const initialValue = el.dataset.value || '';
+      const isReadonly = el.dataset.readonly === '1';
+      const isDisabled = el.dataset.disabled === '1';
+      const showFreeText = el.dataset.showFreeText !== '0';
+      const colorful = el.dataset.colorful === '1';
+      const hiddenInput = el.querySelector('input[type="hidden"]');
 
-      const root = createRoot(el);
+      // Create a dedicated container for React so the hidden input is preserved
+      const reactContainer = document.createElement('div');
+      reactContainer.className = 'token-template-field__react-root';
+      el.appendChild(reactContainer);
+
+      const root = createRoot(reactContainer);
       el._reactRoot = root;
 
       root.render(
         <TokenTemplateField
           availableTokens={availableTokens}
           initialValue={initialValue}
+          readonly={isReadonly}
+          disabled={isDisabled}
+          showFreeText={showFreeText}
+          colorful={colorful}
           onChange={(newValue) => {
-            $(el).find('input[type="hidden"]').val(newValue).trigger('change');
+            if (hiddenInput) {
+              hiddenInput.value = newValue;
+              $(hiddenInput).trigger('change');
+            }
             el.dataset.value = newValue;
           }}
         />
