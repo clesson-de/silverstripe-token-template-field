@@ -1,0 +1,24 @@
+{
+  "name": "silverstripe-token-template-field",
+  "private": true,
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c --watch"
+  },
+  "devDependencies": {
+    "@babel/core": "^7",
+    "@babel/preset-env": "^7",
+    "@babel/preset-react": "^7",
+    "@rollup/plugin-babel": "^6",
+    "@rollup/plugin-commonjs": "^25",
+    "@rollup/plugin-node-resolve": "^15",
+    "@rollup/plugin-replace": "^6.0.3",
+    "rollup": "^4",
+    "rollup-plugin-scss": "^4",
+    "sass": "^1.99.0"
+  },
+  "dependencies": {
+    "react": "^18",
+    "react-dom": "^18"
+  }
+}

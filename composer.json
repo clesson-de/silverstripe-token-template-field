@@ -1,0 +1,22 @@
+{
+    "name": "clesson-de/silverstripe-token-template-field",
+    "description": "A Silverstripe CMS form field that allows users to compose template strings by chaining visual token pills.",
+    "type": "silverstripe-vendormodule",
+    "license": "BSD-3-Clause",
+    "require": {
+        "php": "^8.1",
+        "silverstripe/framework": "^6",
+        "silverstripe/admin": "^3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Clesson\\Silverstripe\\TokenTemplateField\\": "src/"
+        }
+    },
+    "extra": {
+        "expose": [
+            "client/dist"
+        ]
+    }
+}
+

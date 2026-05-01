@@ -1,0 +1,124 @@
+// Token type colors
+$token-colors: (
+  'text':        ('bg': #e5e7eb, 'text': #111827),
+  'placeholder': ('bg': #3b82f6, 'text': #ffffff),
+);
+
+.token-template-field {
+  outline: none;
+
+  &__token-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    padding: 8px;
+    min-height: 48px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    outline: none;
+
+    &:focus-within {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+  }
+
+  &__token {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: grab;
+    user-select: none;
+    transition: opacity 0.15s, box-shadow 0.15s;
+
+    &--text {
+      background: map-get(map-get($token-colors, 'text'), 'bg');
+      color: map-get(map-get($token-colors, 'text'), 'text');
+    }
+
+    &--placeholder {
+      background: map-get(map-get($token-colors, 'placeholder'), 'bg');
+      color: map-get(map-get($token-colors, 'placeholder'), 'text');
+    }
+
+    &--selected {
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px #1d4ed8;
+    }
+
+    &--dragging {
+      opacity: 0.4;
+      cursor: grabbing;
+    }
+
+    &--droptarget {
+      border-left: 3px solid #f59e0b;
+      margin-left: 4px;
+    }
+  }
+
+  &__token-label {
+    white-space: pre;
+  }
+
+  &__token-edit-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 13px;
+    padding: 0;
+    margin: 0;
+    min-width: 60px;
+    width: auto;
+    color: inherit;
+  }
+
+  &__token-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
+    padding: 0 2px;
+    opacity: 0.6;
+    color: inherit;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &__controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+
+  &__token-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  &__available-token-btn {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+    cursor: pointer;
+    font-size: 13px;
+
+    &:hover {
+      background: #bfdbfe;
+    }
+  }
+}
+

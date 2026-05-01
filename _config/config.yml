@@ -1,0 +1,9 @@
+---
+Name: token-template-field-config
+---
+
+SilverStripe\Admin\LeftAndMain:
+  extra_requirements_javascript:
+    - clesson-de/silverstripe-token-template-field:client/dist/tokentemplatefield.js
+  extra_requirements_css:
+    - clesson-de/silverstripe-token-template-field:client/dist/tokentemplatefield.css

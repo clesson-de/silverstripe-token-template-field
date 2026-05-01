@@ -1,0 +1,13 @@
+# IDE
+.idea/
+
+# Node dependencies
+node_modules/
+
+# Build artifacts
+client/dist/
+*.log
+
+# OS files
+.DS_Store
+
