@@ -5,7 +5,6 @@
 node_modules/
 
 # Build artifacts
-client/dist/
 *.log
 
 # OS files
