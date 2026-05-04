@@ -251,13 +251,15 @@ class TokenTemplateField extends FormField
     }
 
     /**
-     * Parses a template string by replacing all {key} placeholders with the corresponding values.
+     * Parses a template string by replacing all {key} and [key] placeholders with the corresponding values.
+     *
+     * Supports both curly-brace syntax ({key}) and legacy square-bracket syntax ([key]).
      *
      * Example:
      *   TokenTemplateField::parse('Hello {name}!', ['name' => 'World'])
      *   // Returns: "Hello World!"
      *
-     * @param string $template The template string containing {key} placeholders.
+     * @param string $template The template string containing {key} or [key] placeholders.
      * @param array<string, string> $values Map of token keys to their replacement values.
      * @return string The parsed string with all known placeholders replaced.
      */
@@ -267,6 +269,7 @@ class TokenTemplateField extends FormField
 
         foreach ($values as $key => $value) {
             $replacements['{' . $key . '}'] = $value;
+            $replacements['[' . $key . ']'] = $value;
         }
 
         return str_replace(array_keys($replacements), array_values($replacements), $template);
