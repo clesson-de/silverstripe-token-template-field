@@ -550,6 +550,10 @@
 	    isSelected = _ref.isSelected,
 	    isDragging = _ref.isDragging,
 	    isDropTarget = _ref.isDropTarget,
+	    _ref$isFirst = _ref.isFirst,
+	    isFirst = _ref$isFirst === void 0 ? false : _ref$isFirst,
+	    _ref$isLast = _ref.isLast,
+	    isLast = _ref$isLast === void 0 ? false : _ref$isLast,
 	    onSelect = _ref.onSelect,
 	    onRemove = _ref.onRemove,
 	    onEdit = _ref.onEdit,
@@ -573,7 +577,11 @@
 	  var selectedClass = isSelected ? 'token-template-field__token--selected' : '';
 	  var draggingClass = isDragging ? 'token-template-field__token--dragging' : '';
 	  var dropTargetClass = isDropTarget ? 'token-template-field__token--droptarget' : '';
-	  var className = ['token-template-field__token', typeClass, colorClass, selectedClass, draggingClass, dropTargetClass].filter(Boolean).join(' ');
+
+	  // Position classes drive the chevron clip-path variant
+	  var isOnly = isFirst && isLast;
+	  var positionClass = isOnly ? 'token-template-field__token--only' : isFirst ? 'token-template-field__token--first' : isLast ? 'token-template-field__token--last' : '';
+	  var className = ['token-template-field__token', typeClass, colorClass, selectedClass, draggingClass, dropTargetClass, positionClass].filter(Boolean).join(' ');
 	  var handleRemoveClick = function handleRemoveClick(e) {
 	    e.stopPropagation();
 	    onRemove();
@@ -879,7 +887,7 @@
 	    tabIndex: locked ? -1 : 0
 	  }, /*#__PURE__*/React.createElement("div", {
 	    className: "token-template-field__token-list"
-	  }, tokens.map(function (token) {
+	  }, tokens.map(function (token, index) {
 	    return /*#__PURE__*/React.createElement(Token, {
 	      key: token.id,
 	      token: token,
@@ -890,6 +898,8 @@
 	      isSelected: !locked && selectedTokenId === token.id,
 	      isDragging: !locked && (dragState === null || dragState === void 0 ? void 0 : dragState.draggedId) === token.id,
 	      isDropTarget: !locked && (dragState === null || dragState === void 0 ? void 0 : dragState.overId) === token.id,
+	      isFirst: index === 0,
+	      isLast: index === tokens.length - 1,
 	      onSelect: locked ? function () {} : function () {
 	        return handleSelect(token.id);
 	      },

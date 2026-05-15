@@ -1,124 +1,282 @@
-// Token type colors
-$token-colors: (
-  'text':        ('bg': #e5e7eb, 'text': #111827),
-  'placeholder': ('bg': #3b82f6, 'text': #ffffff),
+// ── Chevron dimensions ──────────────────────────────────────────────────────
+$arrow-w: 10px;   // arrow depth
+$token-h: 28px;   // fixed height for consistent arrow angles
+$token-pad: 5px;  // inner horizontal padding (excluding arrow area)
+
+// ── Pastel palettes for colorful mode ────────────────────────────────────────
+$color-palettes: #bfdbfe, #bbf7d0, #fde68a, #fbcfe8, #c7d2fe, #fecaca, #a5f3fc, #d9f99d;
+$color-border-palettes: #93c5fd, #86efac, #fcd34d, #f9a8d4, #a5b4fc, #fca5a5, #67e8f9, #bef264;
+
+// ── Clip-path shapes ─────────────────────────────────────────────────────────
+// LEFT EDGE always starts at x=0 (full height rectangle).
+// The inward notch points from (0,0)/(0,100%) toward ($arrow-w, 50%).
+//
+// Middle: full-rect left, notch indents to $arrow-w, arrow tip on right
+$cp-middle: polygon(
+  0% 0%,
+  calc(100% - #{$arrow-w}) 0%,
+  100% 50%,
+  calc(100% - #{$arrow-w}) 100%,
+  0% 100%,
+  #{$arrow-w} 50%
+);
+// First: flat left (no notch) + ▶ arrow right
+$cp-first: polygon(
+  0% 0%,
+  calc(100% - #{$arrow-w}) 0%,
+  100% 50%,
+  calc(100% - #{$arrow-w}) 100%,
+  0% 100%
+);
+// Last: ◀ notch left + flat right (no arrow)
+$cp-last: polygon(
+  0% 0%,
+  100% 0%,
+  100% 100%,
+  0% 100%,
+  #{$arrow-w} 50%
 );
 
+// ── Root ─────────────────────────────────────────────────────────────────────
 .token-template-field {
   outline: none;
 
-  &__token-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-    padding: 8px;
-    min-height: 48px;
-    border: 1px solid #d1d5db;
-    border-radius: 6px;
-    background: #fff;
-    outline: none;
-
-    &:focus-within {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  // ── Locked state ─────────────────────────────────────────────────────────
+  &--locked {
+    .token-template-field__token-list {
+      background: #f9fafb;
+      cursor:     default;
+    }
+    .token-template-field__token {
+      cursor: default;
     }
   }
 
+  // ── Token list (input area) ───────────────────────────────────────────────
+  &__token-list {
+    display:        flex;
+    flex-wrap:      wrap;
+    row-gap:        6px;
+    column-gap:     0;
+    align-items:    center;
+    padding:        8px;
+    min-height:     48px;
+    border:         1px solid #d1d5db;
+    border-radius:  6px;
+    background:     #fff;
+    outline:        none;
+    position:       relative;
+
+    &:focus-within {
+      border-color: #3b82f6;
+      box-shadow:   0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+  }
+
+  // ── Toggle button (collapse controls) ────────────────────────────────────
+  &__toggle-btn {
+    position:        absolute;
+    right:           8px;
+    top:             50%;
+    transform:       translateY(-50%);
+    background:      none;
+    border:          none;
+    cursor:          pointer;
+    font-size:       16px;
+    color:           #6b7280;
+    padding:         4px 6px;
+    line-height:     1;
+    border-radius:   4px;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+
+    &:hover {
+      color:      #111827;
+      background: #f3f4f6;
+    }
+
+    svg {
+      transition:       transform 0.2s ease;
+      fill:             none;
+      stroke:           currentColor;
+      stroke-width:     2;
+      stroke-linecap:   round;
+      stroke-linejoin:  round;
+    }
+
+    &--open svg {
+      transform: rotate(180deg);
+    }
+  }
+
+  // ── Token ─────────────────────────────────────────────────────────────────
   &__token {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 3px 8px;
-    border-radius: 999px;
-    font-size: 13px;
-    cursor: grab;
-    user-select: none;
-    transition: opacity 0.15s, box-shadow 0.15s;
+    position:     relative;
+    display:      inline-flex;
+    align-items:  center;
+    gap:          4px;
 
+    height:       $token-h;
+    // Padding compensates for notch (left) and arrow (right)
+    padding:      0 calc(#{$token-pad} + #{$arrow-w});
+
+    border-radius: 0;
+    font-size:    13px;
+    line-height:  1;
+    cursor:       grab;
+    user-select:  none;
+    transition:   filter 0.15s;
+
+    // Negative margin: next token overlaps by (arrow-w - 1px).
+    // The 1px white gap appears only at the chevron junction tip.
+    // Later DOM elements render on top (position:relative stacking order).
+    margin-right: calc(-1 * #{$arrow-w} + 2px);
+
+    // Default: middle token — notch left, arrow right
+    clip-path: $cp-middle;
+
+    // ── Type: text ──────────────────────────────────────────────────────────
     &--text {
-      background: map-get(map-get($token-colors, 'text'), 'bg');
-      color: map-get(map-get($token-colors, 'text'), 'text');
+      background: #e5e7eb;
+      color:      #111827;
     }
 
+    // ── Type: placeholder (base color, overridden by --mono / --color-N) ───
     &--placeholder {
-      background: map-get(map-get($token-colors, 'placeholder'), 'bg');
-      color: map-get(map-get($token-colors, 'placeholder'), 'text');
+      color: #1e293b;
     }
 
+    // Non-colorful placeholder → uniform grey
+    &--mono {
+      background: #e5e7eb;
+      color:      #111827;
+    }
+
+    // Colorful placeholder variants
+    @for $i from 0 through 7 {
+      &--color-#{$i} {
+        background: nth($color-palettes, $i + 1);
+        color:      #1e293b;
+      }
+    }
+
+    // ── Position variants ───────────────────────────────────────────────────
+
+    // First: no left notch → normal left padding
+    &--first {
+      padding-left: $token-pad;
+      clip-path:    $cp-first;
+    }
+
+    // Last: no right arrow → normal right padding; margin clears toggle button
+    &--last {
+      padding-right: $token-pad;
+      margin-right:  8px;
+      clip-path:     $cp-last;
+    }
+    // Only (single) token: plain rounded rectangle
+    &--only {
+      padding:       0 $token-pad;
+      margin-right:  8px;
+      border-radius: 3px;
+      clip-path:     none;
+    }
+
+    // ── States ──────────────────────────────────────────────────────────────
+
+    // outline is NOT clipped by clip-path in modern browsers
     &--selected {
-      box-shadow: 0 0 0 2px #fff, 0 0 0 4px #1d4ed8;
+      outline:        2px solid #1d4ed8;
+      outline-offset: 1px;
     }
 
     &--dragging {
       opacity: 0.4;
-      cursor: grabbing;
+      cursor:  grabbing;
     }
 
     &--droptarget {
-      border-left: 3px solid #f59e0b;
-      margin-left: 4px;
+      outline:        2px dashed #f59e0b;
+      outline-offset: 1px;
     }
   }
 
+  // ── Token internals ───────────────────────────────────────────────────────
   &__token-label {
     white-space: pre;
   }
 
   &__token-edit-input {
-    border: none;
-    outline: none;
+    border:     none;
+    outline:    none;
     background: transparent;
-    font-size: 13px;
-    padding: 0;
-    margin: 0;
-    min-width: 60px;
-    width: auto;
-    color: inherit;
+    font-size:  13px;
+    padding:    0;
+    margin:     0;
+    min-width:  60px;
+    width:      auto;
+    color:      inherit;
   }
 
   &__token-remove {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
+    background:  none;
+    border:      none;
+    cursor:      pointer;
+    font-size:   12px;
     line-height: 1;
-    padding: 0 2px;
-    opacity: 0.6;
-    color: inherit;
+    padding:     0 2px;
+    opacity:     0.6;
+    color:       inherit;
 
-    &:hover {
-      opacity: 1;
-    }
+    &:hover { opacity: 1; }
   }
 
+  // ── Controls panel ────────────────────────────────────────────────────────
   &__controls {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
+    display:     flex;
+    gap:         8px;
+    margin-top:  8px;
     align-items: center;
-    flex-wrap: wrap;
-  }
+    flex-wrap:   wrap;
 
+    &--hidden { display: none; }
+  }
 
   &__token-selector {
-    display: flex;
+    display:   flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap:       6px;
   }
 
+  // ── Available-token buttons (selector) ───────────────────────────────────
   &__available-token-btn {
-    padding: 3px 10px;
+    padding:       3px 10px;
     border-radius: 999px;
-    background: #dbeafe;
-    color: #1e40af;
-    border: 1px solid #93c5fd;
-    cursor: pointer;
-    font-size: 13px;
+    border:        1px solid #d1d5db;
+    cursor:        pointer;
+    font-size:     13px;
+    color:         #1e293b;
 
-    &:hover {
-      background: #bfdbfe;
+    &:hover { opacity: 0.85; }
+
+    // Colorful variants
+    @for $i from 0 through 7 {
+      &--color-#{$i} {
+        background:   nth($color-palettes, $i + 1);
+        border-color: nth($color-border-palettes, $i + 1);
+      }
+    }
+
+    &--mono {
+      background:   #e5e7eb;
+      border-color: #9ca3af;
+    }
+
+    &--abc {
+      background:   #e5e7eb;
+      border-color: #9ca3af;
+      font-weight:  600;
     }
   }
 }
-

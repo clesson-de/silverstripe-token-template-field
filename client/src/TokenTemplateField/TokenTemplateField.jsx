@@ -178,7 +178,7 @@ export default function TokenTemplateField({ availableTokens, initialValue, onCh
   return (
     <div className={`token-template-field${locked ? ' token-template-field--locked' : ''}`} ref={wrapperRef} onKeyDown={locked ? undefined : handleKeyDown} tabIndex={locked ? -1 : 0}>
       <div className="token-template-field__token-list">
-        {tokens.map((token) => (
+        {tokens.map((token, index) => (
           <Token
             key={token.id}
             token={token}
@@ -189,6 +189,8 @@ export default function TokenTemplateField({ availableTokens, initialValue, onCh
             isSelected={!locked && selectedTokenId === token.id}
             isDragging={!locked && dragState?.draggedId === token.id}
             isDropTarget={!locked && dragState?.overId === token.id}
+            isFirst={index === 0}
+            isLast={index === tokens.length - 1}
             onSelect={locked ? () => {} : () => handleSelect(token.id)}
             onRemove={locked ? () => {} : () => handleRemove(token.id)}
             onEdit={locked ? () => {} : (newValue) => handleEditToken(token.id, newValue)}

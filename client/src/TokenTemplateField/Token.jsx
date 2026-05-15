@@ -9,6 +9,8 @@ export default function Token({
   isSelected,
   isDragging,
   isDropTarget,
+  isFirst = false,
+  isLast = false,
   onSelect,
   onRemove,
   onEdit,
@@ -33,9 +35,19 @@ export default function Token({
       ? `token-template-field__token--color-${colorIndex}`
       : 'token-template-field__token--mono')
     : '';
-  const selectedClass = isSelected ? 'token-template-field__token--selected' : '';
-  const draggingClass = isDragging ? 'token-template-field__token--dragging' : '';
+  const selectedClass   = isSelected   ? 'token-template-field__token--selected'   : '';
+  const draggingClass   = isDragging   ? 'token-template-field__token--dragging'   : '';
   const dropTargetClass = isDropTarget ? 'token-template-field__token--droptarget' : '';
+
+  // Position classes drive the chevron clip-path variant
+  const isOnly = isFirst && isLast;
+  const positionClass = isOnly
+    ? 'token-template-field__token--only'
+    : isFirst
+      ? 'token-template-field__token--first'
+      : isLast
+        ? 'token-template-field__token--last'
+        : '';
 
   const className = [
     'token-template-field__token',
@@ -44,6 +56,7 @@ export default function Token({
     selectedClass,
     draggingClass,
     dropTargetClass,
+    positionClass,
   ]
     .filter(Boolean)
     .join(' ');
